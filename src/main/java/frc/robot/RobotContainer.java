@@ -30,7 +30,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  public final IndexSubsystem indexSubsystem = new IndexSubsystem();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final Limelight limelight = new Limelight();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -76,30 +75,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // 全手動
-    copilotJoystick.povDown().whileTrue(Commands.run(() -> {
-    }));
-    copilotJoystick.povDown().onFalse(Commands.runOnce(() -> shooterSubsystem.stop_shooter()));
-    copilotJoystick.povUp().whileTrue(Commands.run(() -> {
-    }));
-    copilotJoystick.povUp().onFalse(Commands.runOnce(() -> shooterSubsystem.stop_shooter()));
+
 
     copilotJoystick.rightBumper().whileTrue(Commands.run(() -> elevatorSubsystem.elevator_stupid_up()));
     copilotJoystick.rightBumper().onFalse(Commands.runOnce(() -> elevatorSubsystem.elevator_stop()));
     copilotJoystick.leftBumper().whileTrue(Commands.run(() -> elevatorSubsystem.elevator_stupid_down()));
     copilotJoystick.leftBumper().onFalse(Commands.runOnce(() -> elevatorSubsystem.elevator_stop()));
-
-    copilotJoystick.y().onTrue(Commands.runOnce(() -> {
-      intakeSubsystem.eat();
-    }));
-    copilotJoystick.y().onFalse(Commands.runOnce(() -> {
-      intakeSubsystem.suckStop();
-    }));
-    copilotJoystick.x().onTrue(Commands.runOnce(() -> {
-      intakeSubsystem.put();
-    }));
-    copilotJoystick.x().onFalse(Commands.runOnce(() -> {
-      intakeSubsystem.suckStop();
-    }));
+    
   }
 
   /**

@@ -27,18 +27,20 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static enum PortID {
-        elevator_elongation_r_falcon500(13, false, 0, 0, 0, 0, 0, 0, 0),
-        elevator_elongation_l_falcon500(14, false, 0, 0, 0, 0, 0, 0, 0),
-        shooter_down_falcon500(15, false, 0, 0, 0, 0, 0, 0, 0),
-        shooter_up_falcon500(16, false, 0, 0, 0, 0, 0, 0, 0),
-        intake_suck1_neo(1, true, 0, 0, 0, 0, 0, 0.2, 0),
-        intake_suck2_neo(1, true, 0, 0, 0, 0, 0, 0.2, 0),
-        index1_neo(2, false, 0, 0, 0, 0, 0, 0, 0),
-        index2_neo(3, false, 0, 0, 0, 0, 0, 0, 0),
-        shooter_angle_neo(3, false, 0, 0, 0, 0, 0, 0, 0),;
+        elevator_r_neo(13, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        elevator_l_neo(14, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        shooter_down_kraken(15, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        shooter_up_kraken(16, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        intake_suck_up_kraken(1, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
+        intake_suck_down_kraken(1, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
+        digital_intake(0, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),;
 
         public final int port;
         public final boolean reversed;
+        public final double Voltage;
+        public final boolean LIMIT_CURRENT_ENABLE;
+        public final double CONTINUOS_CURRENT_LIMIT;
+        public final double PEAK_CURRENT_LIMIT;
         public final double kP;
         public final double kI;
         public final double kD;
@@ -50,10 +52,15 @@ public final class Constants {
         /**
          * port, reversed, kP, kI, kD, kF, I_Zone, ramp_rate, allow_error
          */
-        PortID(int port, boolean reversed, double kP, double kI, double kD, double kF, int I_Zone, double ramp_rate,
+        PortID(int port, boolean reversed, double Voltage, boolean LIMIT_CURRENT_ENABLE, double CONTINUOS_CURRENT_LIMIT,
+                double PEAK_CURRENT_LIMIT, double kP, double kI, double kD, double kF, int I_Zone, double ramp_rate,
                 int allow_error) {
             this.port = port;
             this.reversed = reversed;
+            this.Voltage = Voltage;
+            this.LIMIT_CURRENT_ENABLE = LIMIT_CURRENT_ENABLE;
+            this.PEAK_CURRENT_LIMIT = PEAK_CURRENT_LIMIT;
+            this.CONTINUOS_CURRENT_LIMIT = CONTINUOS_CURRENT_LIMIT;
             this.kP = kP;
             this.kI = kI;
             this.kD = kD;

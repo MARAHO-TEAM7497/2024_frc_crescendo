@@ -4,12 +4,7 @@
 
 package frc.robot.modules;
 
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -17,31 +12,28 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants.PortID;
-import frc.robot.Constants;
 
 public class TalonFxMotorPIDmodule {
   public TalonFX motor;
   public TalonFXConfiguration Config = new TalonFXConfiguration();
-  DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
-  VelocityVoltage driveVelocity = new VelocityVoltage(0);
-  PositionVoltage anglePosition = new PositionVoltage(0);
-
-  InvertedValue bool2InvertedValue(boolean bool) {
-    return bool ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-  }
+  DutyCycleOut DutyCycle = new DutyCycleOut(0);
+  VelocityVoltage Velocity = new VelocityVoltage(0);
+  PositionVoltage Position = new PositionVoltage(0);
 
   /** Creates a new ExampleSubsystem. */
   public TalonFxMotorPIDmodule(PortID id, NeutralModeValue NeutralMode) {
-    Config.MotorOutput.Inverted = bool2InvertedValue(id.reversed);
-    Config.MotorOutput.NeutralMode = NeutralMode;
     Config.Slot0.kP = id.kP;
     Config.Slot0.kI = id.kI;
     Config.Slot0.kD = id.kD;
 
-    Config.CurrentLimits.SupplyCurrentLimitEnable = id.EnableCurrentLimit;
-    Config.CurrentLimits.SupplyCurrentLimit = id.CurrentLimit;
-    Config.CurrentLimits.SupplyCurrentThreshold = id.CurrentThreshold;
-    Config.CurrentLimits.SupplyTimeThreshold = id.CurrentThresholdTime;
+    Config.CurrentLimits.SupplyCurrentLimitEnable = id.LIMIT_CURRENT_ENABLE;
+    Config.CurrentLimits.SupplyCurrentLimit = id.CONTINUOS_CURRENT_LIMIT;
+    Config.CurrentLimits.SupplyCurrentThreshold = id.PEAK_CURRENT_LIMIT;
+    Config.CurrentLimits.SupplyTimeThreshold = 0.1;
+
+    motor.setNeutralMode(NeutralMode);
+    motor.setInverted(id.reversed);
+    motor.setVoltage(id.Voltage);
 
     Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = (id.ramp_rate);
     Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = (id.ramp_rate);
@@ -50,71 +42,49 @@ public class TalonFxMotorPIDmodule {
 
     Config.Feedback.SensorToMechanismRatio = 1;
     motor.getConfigurator().apply(Config);
-    motor.setVoltage(10);
   }
 
-  public void cv2Ticks_velocity(double cvtTicks_velocity) {
-    this.cvtTicks_velocity = cvtTicks_velocity;
-  }
-
-  public void cv2Ticks_position(double cvtTicks_position) {
-    this.cvtTicks_position = cvtTicks_position;
+  public void cv2Ticks(double cvtTicks) {
+    Config.Feedback.SensorToMechanismRatio = cvtTicks;
+    motor.getConfigurator().apply(Config);
   }
 
   public void setVelocity(double Unit) {
-    motor.set(ControlMode.Velocity, (int) (Unit * cvtTicks_velocity));
+    motor.setControl(Velocity.withVelocity(Unit));
   }
 
   public void stop() {
-    motor.set(ControlMode.PercentOutput, 0);
+    motor.setControl(DutyCycle.withOutput(0));
   }
 
   public void set_position(double Unit) {
-    motor.set(ControlMode.Position, (int) (Unit * cvtTicks_position));
+    motor.setControl(Position.withPosition(Unit));
   }
 
   public double get_Velocity() {
-    return motor.getSelectedSensorVelocity() / cvtTicks_velocity;
+    return motor.getVelocity().getValue();
   }
 
   public void setPercentOutput(double PercentOutput) {
     if (Math.abs(PercentOutput) < 0.05)
       PercentOutput = 0;
-    motor.set(ControlMode.PercentOutput, PercentOutput);
+    motor.setControl(DutyCycle.withOutput(PercentOutput));
   }
 
   public void reset_position() {
-    motor.setSelectedSensorPosition(0);
+    motor.setPosition(0);
   }
 
   public void reset_current_position(double Unit) {
-    motor.setSelectedSensorPosition((int) (Unit * cvtTicks_position));
+    motor.setPosition(Unit);
   }
 
   public double get_position() {
-    return motor.getSelectedSensorPosition() / cvtTicks_position;
+    return motor.getPosition().getValue();
   }
 
   public double get_OutputPercent() {
-    return motor.getMotorOutputPercent();
-  }
-
-  private TalonFX TalonFXInitModule(PortID id, NeutralMode NeutralMode) {
-    TalonFX talonfx = new TalonFX(id.port);
-    talonfx.configFactoryDefault();
-    talonfx.setInverted(id.reversed);
-    talonfx.setNeutralMode(NeutralMode);
-    talonfx.configClosedloopRamp(id.ramp_rate);
-
-    talonfx.configSelectedFeedbackSensor(feedbackDevice, 0, Constants.kTIMEOUT);
-    talonfx.config_kP(0, id.kP, Constants.kTIMEOUT);
-    talonfx.config_kI(0, id.kI, Constants.kTIMEOUT);
-    talonfx.config_kD(0, id.kD, Constants.kTIMEOUT);
-    talonfx.config_kF(0, id.kF, Constants.kTIMEOUT);
-    talonfx.config_IntegralZone(0, id.I_Zone, Constants.kTIMEOUT);
-    talonfx.configAllowableClosedloopError(0, id.allow_error, Constants.kTIMEOUT);
-
-    return talonfx;
+    return motor.getDutyCycle().getValue();
   }
 
 }

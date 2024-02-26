@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -51,8 +52,6 @@ public class Robot extends TimedRobot {
     camera2 = CameraServer.startAutomaticCapture(1);
     cameraSelection2 = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection2");
     cameraSelection2.setString(camera2.getName());
-
-    m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kCoast);
   }
 
   /**
@@ -80,7 +79,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kCoast);
+    
   }
 
   @Override
@@ -93,7 +92,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kBrake);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -109,7 +107,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kBrake);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

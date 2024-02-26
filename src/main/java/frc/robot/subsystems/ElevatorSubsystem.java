@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortID;
@@ -11,10 +12,8 @@ import frc.robot.modules.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public TalonFxMotorPIDmodule elevatorl = new TalonFxMotorPIDmodule(PortID.elevator_elongation_l_falcon500,
-      NeutralMode.Brake, FeedbackDevice.IntegratedSensor);
-  public TalonFxMotorPIDmodule elevatorr = new TalonFxMotorPIDmodule(PortID.elevator_elongation_r_falcon500,
-      NeutralMode.Brake, FeedbackDevice.IntegratedSensor);
+  NeoMotorPIDmodule elevatorl  = new NeoMotorPIDmodule(PortID.elevator_l_neo, IdleMode.kBrake);
+  NeoMotorPIDmodule elevatorr = new NeoMotorPIDmodule(PortID.elevator_r_neo, IdleMode.kBrake);
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
