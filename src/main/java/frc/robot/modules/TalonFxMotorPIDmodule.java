@@ -22,6 +22,8 @@ public class TalonFxMotorPIDmodule {
 
   /** Creates a new ExampleSubsystem. */
   public TalonFxMotorPIDmodule(PortID id, NeutralModeValue NeutralMode) {
+    motor = new TalonFX(id.port);
+
     Config.Slot0.kP = id.kP;
     Config.Slot0.kI = id.kI;
     Config.Slot0.kD = id.kD;

@@ -27,12 +27,12 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static enum PortID {
-        elevator_r_neo(13, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        elevator_l_neo(14, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        shooter_down_kraken(15, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        shooter_up_kraken(16, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        intake_suck_up_kraken(1, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
-        intake_suck_down_kraken(1, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
+        elevator_r_neo(0, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        elevator_l_neo(1, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        shooter_down_kraken(20, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        shooter_up_kraken(21, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        intake_suck_up_kraken(22, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
+        intake_suck_down_kraken(23, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
         digital_intake(0, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),;
 
         public final int port;
@@ -136,10 +136,10 @@ public final class Constants {
         public static final boolean kFrontRightTurningAbsoluteEncoderReversed = true;
         public static final boolean kBackRightTurningAbsoluteEncoderReversed = true;
 
-        public static final double kFrontLeftTurningAbsoluteEncoderOffsetTicks = 6153;
-        public static final double kBackLeftTurningAbsoluteEncoderOffsetTicks = 13594;
-        public static final double kFrontRightTurningAbsoluteEncoderOffsetTicks = 10275;
-        public static final double kBackRightTurningAbsoluteEncoderOffsetTicks = 12180;
+        public static final double kFrontLeftTurningAbsoluteEncoderOffsetTicks = 1040;
+        public static final double kBackLeftTurningAbsoluteEncoderOffsetTicks = 413;
+        public static final double kFrontRightTurningAbsoluteEncoderOffsetTicks = 1014;
+        public static final double kBackRightTurningAbsoluteEncoderOffsetTicks = 2888;
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
@@ -169,14 +169,7 @@ public final class Constants {
                 new PIDConstants(5.0, 0, 0), // Translation constants
                 new PIDConstants(5.0, 0, 0), // Rotation constants
                 DriveConstants.kPhysicalMaxSpeedMetersPerSecond,
-                new Translation2d(DriveConstants.kWheelBase / 2, DriveConstants.kTrackWidth / 2).getNorm(), // Drive
-                                                                                                            // base
-                                                                                                            // radius
-                                                                                                            // (distance
-                                                                                                            // from
-                                                                                                            // center to
-                                                                                                            // furthest
-                                                                                                            // module)
+                new Translation2d(DriveConstants.kWheelBase / 2, DriveConstants.kTrackWidth / 2).getNorm(), // Drive  base radius (distance from center to furthest module)
                 new ReplanningConfig());
     }
 

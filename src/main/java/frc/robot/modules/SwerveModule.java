@@ -1,4 +1,3 @@
-
 /*
  * https://youtu.be/0Xi9yb1IMyA
  * learn by FRC 0 to Autonomous: #6 Swerve Drive Auto
@@ -12,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,13 +19,16 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants;
+import com.ctre.phoenix.sensors.CANCoder;
+
 
 public class SwerveModule {
 
     private final TalonFX driveMotor;
     private final TalonFX turningMotor;
     
-    private final TalonSRX turningEncoder;
+    //private final TalonSRX turningEncoder;
+    private final CANCoder turningEncoder;
 
     private final PIDController turningPidController;
 
@@ -54,8 +55,9 @@ public class SwerveModule {
         driveMotor.configOpenloopRamp(0.1);
         turningMotor.configOpenloopRamp(0.1);
         
-        turningEncoder = new TalonSRX(absoluteEncoderId);
-        turningEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+        turningEncoder = new CANCoder(absoluteEncoderId);
+        turningEncoder.configFactoryDefault();
+        //turningEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
         turningMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
         driveMotor.config_kP(0, ModuleConstants.kP, Constants.kTIMEOUT);
@@ -98,7 +100,7 @@ public class SwerveModule {
     }
 
     public double getTurningPosition() {
-        return (turningEncoder.getSelectedSensorPosition()-absoluteEncoderOffsetTicks)* ModuleConstants.kTurningEncoderTicks2Rot
+        return (turningEncoder.getAbsolutePosition()*4096/360-absoluteEncoderOffsetTicks)* ModuleConstants.kTurningEncoderTicks2Rot
             * ModuleConstants.kTurningEncoderRot2Rad* (absoluteEncoderReversed? -1 : 1);
     }
 
@@ -108,7 +110,7 @@ public class SwerveModule {
     }
 
     public double getTurningVelocity() {
-        return turningEncoder.getSelectedSensorVelocity()* ModuleConstants.kTurningEncoderTicksPerPulse2RPS* 
+        return turningEncoder.getVelocity()* ModuleConstants.kTurningEncoderTicksPerPulse2RPS* 
             ModuleConstants.kTurningEncoderRPS2RadPerSec* (absoluteEncoderReversed? 1 : -1);
     }
 
@@ -163,11 +165,11 @@ public class SwerveModule {
     }
 
     public void output(SwerveModuleState state){
-        SmartDashboard.putNumber("giveSpeed[" + (int)driveMotorId/3 + "]", roundDouble(state.speedMetersPerSecond));
-        SmartDashboard.putNumber("giveRad[" + (int)driveMotorId/3 + "]", roundDouble(state.angle.getRadians()));
-        SmartDashboard.putNumber("getSpeed[" + (int)driveMotorId/3 + "]", roundDouble(getDriveVelocity()));
-        SmartDashboard.putNumber("getRad[" + (int)driveMotorId/3 + "]", roundDouble(getTurningPosition()));
-        SmartDashboard.putData("turningPID[" + (int)driveMotorId/3 + "]", turningPidController);
+        SmartDashboard.putNumber("giveSpeed[" + (int)driveMotorId/2 + "]", roundDouble(state.speedMetersPerSecond));
+        SmartDashboard.putNumber("giveRad[" + (int)driveMotorId/2 + "]", roundDouble(state.angle.getRadians()));
+        SmartDashboard.putNumber("getSpeed[" + (int)driveMotorId/2 + "]", roundDouble(getDriveVelocity()));
+        SmartDashboard.putNumber("getRad[" + (int)driveMotorId/2 + "]", roundDouble(getTurningPosition()));
+        SmartDashboard.putData("turningPID[" + (int)driveMotorId/2 + "]", turningPidController);
     }
 
     public void stop() {
