@@ -1,0 +1,21 @@
+[
+  {
+    "type": "java",
+    "name": "jar (in project 2024_frc_crescendo)",
+    "extensions": [
+      {
+        "name": "Sim GUI",
+        "libName": "/Users/moonjam/Desktop/Code/2024_frc_crescendo/build/jni/release/libhalsim_gui.dylib",
+        "defaultEnabled": true
+      },
+      {
+        "name": "Use Real DriverStation",
+        "libName": "/Users/moonjam/Desktop/Code/2024_frc_crescendo/build/jni/release/libhalsim_ds_socket.dylib",
+        "defaultEnabled": false
+      }
+    ],
+    "environment": {},
+    "libraryDir": "/Users/moonjam/Desktop/Code/2024_frc_crescendo/build/jni/release",
+    "mainClassName": "frc.robot.Main"
+  }
+]
