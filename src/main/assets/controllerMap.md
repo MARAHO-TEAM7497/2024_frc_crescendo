@@ -13,4 +13,4 @@
 
 | Key | Action |
 | ------- | ------ |
-|somthing| somthing |
+|somthing | somthing |
