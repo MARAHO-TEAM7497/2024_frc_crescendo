@@ -27,13 +27,13 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static enum PortID {
-        elevator_r_neo(0, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        elevator_l_neo(1, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        shooter_down_kraken(20, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        shooter_up_kraken(21, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        intake_suck_up_kraken(22, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
-        intake_suck_down_kraken(23, true, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0.2, 0),
-        digital_intake(0, false, 10.0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0),;
+        elevator_r_neo(25, false, 10.0, false, 25, 40, 0, 0, 0, 0, 0, 0, 0),
+        elevator_l_neo(26, false, 10.0, false, 25, 40, 0, 0, 0, 0, 0, 0, 0),
+        shooter_up_kraken(23, false, 10.0, true, 25, 40, 0, 0, 0, 0, 0, 0.2, 0),
+        shooter_down_kraken(24, false, 10.0, true, 25, 40, 0, 0, 0, 0, 0, 0.2, 0),
+        intake_suck_up_kraken(21, false, 10.0, true, 20, 30, 0, 0, 0, 0, 0, 0.2, 0),
+        intake_suck_down_kraken(22, true, 10.0, true, 20, 30, 0, 0, 0, 0, 0, 0.2, 0),
+        digital_intake(1, false, 10.0, false, 25, 40, 0, 0, 0, 0, 0, 0, 0),;
 
         public final int port;
         public final boolean reversed;
@@ -71,6 +71,12 @@ public final class Constants {
         }
     }
 
+    public static final class LimelightConstants {
+        public static final double turn_percent = 0.1;
+        public static final double allow_error = 7;
+        public static final double distance = 4;
+    }
+
     public final static int kTIMEOUT = 10;
 
     public static final class ModuleConstants {
@@ -84,7 +90,7 @@ public final class Constants {
         public static final double kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI;
         public static final double kDriveEncoderRPS2MeterPerSec = kDriveEncoderRot2Meter;
         public static final double kTurningEncoderRPS2RadPerSec = kTurningEncoderRot2Rad;
-        public static final double kPTurning = 0.3;
+        public static final double kPTurning = 0.6;
 
         public static final double kP = 0.15;
         public static final double kI = 0.0001;
@@ -126,10 +132,10 @@ public final class Constants {
         public static final boolean kFrontRightTurningReversed = false;
         public static final boolean kBackRightTurningReversed = false;
 
-        public static final boolean kFrontLeftDriveReversed = true;
-        public static final boolean kBackLeftDriveReversed = true;
-        public static final boolean kFrontRightDriveReversed = true;
-        public static final boolean kBackRightDriveReversed = true;
+        public static final boolean kFrontLeftDriveReversed = false;
+        public static final boolean kBackLeftDriveReversed = false;
+        public static final boolean kFrontRightDriveReversed = false;
+        public static final boolean kBackRightDriveReversed = false;
 
         public static final boolean kFrontLeftTurningAbsoluteEncoderReversed = true;
         public static final boolean kBackLeftTurningAbsoluteEncoderReversed = true;
@@ -166,10 +172,17 @@ public final class Constants {
                         kMaxAngularSpeedRadiansPerSecond,
                         kMaxAngularAccelerationRadiansPerSecondSquared);
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-                new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(5.0, 0, 0), // Rotation constants
+                new PIDConstants(1, 0, 0), // Translation constants
+                new PIDConstants(1, 0, 0), // Rotation constants
                 DriveConstants.kPhysicalMaxSpeedMetersPerSecond,
-                new Translation2d(DriveConstants.kWheelBase / 2, DriveConstants.kTrackWidth / 2).getNorm(), // Drive  base radius (distance from center to furthest module)
+                new Translation2d(DriveConstants.kWheelBase / 2, DriveConstants.kTrackWidth / 2).getNorm(), // Drive
+                                                                                                            // base
+                                                                                                            // radius
+                                                                                                            // (distance
+                                                                                                            // from
+                                                                                                            // center to
+                                                                                                            // furthest
+                                                                                                            // module)
                 new ReplanningConfig());
     }
 

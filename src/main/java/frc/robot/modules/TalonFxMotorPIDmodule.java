@@ -16,26 +16,25 @@ import frc.robot.Constants.PortID;
 public class TalonFxMotorPIDmodule {
   public TalonFX motor;
   public TalonFXConfiguration Config = new TalonFXConfiguration();
-  DutyCycleOut DutyCycle = new DutyCycleOut(0);
   VelocityVoltage Velocity = new VelocityVoltage(0);
   PositionVoltage Position = new PositionVoltage(0);
+  DutyCycleOut DutyCycle = new DutyCycleOut(0);
 
   /** Creates a new ExampleSubsystem. */
-  public TalonFxMotorPIDmodule(PortID id, NeutralModeValue NeutralMode) {
+  public TalonFxMotorPIDmodule(PortID id, NeutralModeValue NeutralMode, double PeakForwardVoltage,
+      double PeakReverseVoltage) {
     motor = new TalonFX(id.port);
 
     Config.Slot0.kP = id.kP;
     Config.Slot0.kI = id.kI;
     Config.Slot0.kD = id.kD;
 
+    Config.Voltage.PeakForwardVoltage = PeakForwardVoltage;
+    Config.Voltage.PeakReverseVoltage = PeakReverseVoltage;
     Config.CurrentLimits.SupplyCurrentLimitEnable = id.LIMIT_CURRENT_ENABLE;
     Config.CurrentLimits.SupplyCurrentLimit = id.CONTINUOS_CURRENT_LIMIT;
     Config.CurrentLimits.SupplyCurrentThreshold = id.PEAK_CURRENT_LIMIT;
     Config.CurrentLimits.SupplyTimeThreshold = 0.1;
-
-    motor.setNeutralMode(NeutralMode);
-    motor.setInverted(id.reversed);
-    motor.setVoltage(id.Voltage);
 
     Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = (id.ramp_rate);
     Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = (id.ramp_rate);
@@ -44,6 +43,10 @@ public class TalonFxMotorPIDmodule {
 
     Config.Feedback.SensorToMechanismRatio = 1;
     motor.getConfigurator().apply(Config);
+    motor.setNeutralMode(NeutralMode);
+    motor.setInverted(id.reversed);
+    // motor.setVoltage(id.Voltage);
+    // stop();
   }
 
   public void cv2Ticks(double cvtTicks) {
@@ -87,6 +90,10 @@ public class TalonFxMotorPIDmodule {
 
   public double get_OutputPercent() {
     return motor.getDutyCycle().getValue();
+  }
+
+  public void set_voltage(double voltage) {
+    motor.setVoltage(voltage);
   }
 
 }

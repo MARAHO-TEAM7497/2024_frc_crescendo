@@ -29,8 +29,6 @@ import frc.robot.modules.SwerveModule;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-    public double gyro_pitch_offset = 0;
-
     private final SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
             DriveConstants.kFrontLeftTurningMotorPort,
@@ -123,8 +121,14 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void zeroHeading() {
-        gyro_pitch_offset = 0;
+        System.err.println("reset gyro...");
+        gyro.setAngleAdjustment(0);
         gyro.reset();
+    }
+
+    public void setHeading(double offset){
+        System.err.println("set offset..." + offset);
+        gyro.setAngleAdjustment(offset);
     }
 
     /**

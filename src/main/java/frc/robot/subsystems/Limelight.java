@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.limelight_pipeline;
@@ -11,6 +13,8 @@ import frc.robot.modules.LimelightModule.camMode;
 public class Limelight extends SubsystemBase{
 
     LimelightModule module = new LimelightModule();
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
     @Override
     public void periodic()
@@ -55,12 +59,12 @@ public class Limelight extends SubsystemBase{
             LimelightModule.getBasicData("ty"),
             LimelightModule.getBasicData("ta"),
             LimelightModule.getBasicData("tid"),
-            module.get_AprilTag_3D_Data("botpose")[0],
-            module.get_AprilTag_3D_Data("botpose")[1],
-            module.get_AprilTag_3D_Data("botpose")[2],
-            (module.get_AprilTag_3D_Data("botpose")[3]+360)%360,
-            (module.get_AprilTag_3D_Data("botpose")[4]+360)%360,
-            (module.get_AprilTag_3D_Data("botpose")[5]+360)%360
+            module.get_AprilTag_3D_Data("robotpose")[0],
+            module.get_AprilTag_3D_Data("robotpose")[1],
+            module.get_AprilTag_3D_Data("robotpose")[2],
+            (module.get_AprilTag_3D_Data("robotpose")[3]+360)%360,
+            (module.get_AprilTag_3D_Data("robotpose")[4]+360)%360,
+            (module.get_AprilTag_3D_Data("robotpose")[5]+360)%360
         };
 
         return data;
@@ -81,10 +85,29 @@ public class Limelight extends SubsystemBase{
 
     public void setDriverMode(){
         module.set_Cam_Control("pipeline", limelight_pipeline.driver.value);
-        module.set_Cam_Control("camMode", camMode.Vision_processor.value);
     }
 
     public int get_pipeline(){
         return (int)LimelightModule.getBasicData("getpipe");
     }
+
+    public void limeretrorefliective(){
+        module.set_Cam_Control("retrorefliective", limelight_pipeline.reflective.value);
+    }
+
+    public void limeapriltag(){
+        module.set_Cam_Control("apriltag", limelight_pipeline.aprilTag.value);
+    }
+
+    public double limelighttx(){
+        return table.getEntry("tx").getDouble(0.0);
+    }
+    public double limelightty(){
+        return table.getEntry("ty").getDouble(0.0);
+    }
+
+    public boolean limelighttv(){
+        return table.getEntry("tv").getDouble(0.0) == 1.0;
+    }
+ 
 }

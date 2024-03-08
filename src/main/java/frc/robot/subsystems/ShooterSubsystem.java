@@ -11,9 +11,9 @@ import frc.robot.modules.*;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  public TalonFxMotorPIDmodule shooterUp = new TalonFxMotorPIDmodule(PortID.shooter_up_kraken, NeutralModeValue.Coast);
+  public TalonFxMotorPIDmodule shooterUp = new TalonFxMotorPIDmodule(PortID.shooter_up_kraken, NeutralModeValue.Coast, 10, -10);
   public TalonFxMotorPIDmodule shooterDown = new TalonFxMotorPIDmodule(PortID.shooter_down_kraken,
-      NeutralModeValue.Coast);
+      NeutralModeValue.Coast, 10, -10);
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -30,17 +30,19 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  public void shoot(int meter) {
-    shooterUp.setVelocity(shooterConstant.meter2angle(meter));
-    shooterDown.setVelocity(shooterConstant.meter2angle(meter));
+  public void shoot() {
+    shooterUp.set_voltage(-10);
+    shooterDown.set_voltage(-10);
   }
 
-  public void stop_shooter() {
+  public void amp() {
+    shooterUp.set_voltage(4);
+    shooterDown.set_voltage(-4);
+  }
+
+  public void stop() {
     shooterUp.stop();
-  }
-
-  public void stop_all() {
-    stop_shooter();
+    shooterDown.stop();
   }
 
   public void set_NeutralMode(NeutralModeValue mode){

@@ -4,7 +4,10 @@
 
 | Key | Action |
 | ------- | ------ |
-|somthing| somthing |
+|1|shooter assalerate|
+|2|trigger|
+|3|aim|
+|11|suck|
 
 ## Copilot
 

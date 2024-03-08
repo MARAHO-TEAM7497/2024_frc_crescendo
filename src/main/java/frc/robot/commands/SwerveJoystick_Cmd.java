@@ -88,7 +88,7 @@ public class SwerveJoystick_Cmd extends Command {
                 }
                 turningSpeed = turningLimiter.calculate(turningSpeed) * 0.8
                         * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond
-                        * (-SpeedFunction.get() + 1.1) / 2;
+                        * (-SpeedFunction.get() + 1.1);
             }
 
             // 4. 設定底盤目標速度

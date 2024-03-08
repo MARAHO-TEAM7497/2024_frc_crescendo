@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -25,10 +27,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  UsbCamera camera1;
-  NetworkTableEntry cameraSelection1;
-  UsbCamera camera2;
-  NetworkTableEntry cameraSelection2;
+  // UsbCamera camera1;
+  // NetworkTableEntry cameraSelection1;
+  // UsbCamera camera2;
+  // NetworkTableEntry cameraSelection2;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -42,13 +44,15 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    camera1 = CameraServer.startAutomaticCapture(0);
-    cameraSelection1 = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection1");
-    cameraSelection1.setString(camera1.getName());
+    // camera1 = CameraServer.startAutomaticCapture(0);
+    // cameraSelection1 = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection1");
+    // cameraSelection1.setString(camera1.getName());
 
-    camera2 = CameraServer.startAutomaticCapture(1);
-    cameraSelection2 = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection2");
-    cameraSelection2.setString(camera2.getName());
+    // camera2 = CameraServer.startAutomaticCapture(1);
+    // cameraSelection2 = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection2");
+    // cameraSelection2.setString(camera2.getName());
+
+    //m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kCoast);
   }
 
   /**
@@ -76,7 +80,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    
+    //m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kCoast);
+    m_robotContainer.swerveSubsystem.zeroHeading();
   }
 
   @Override
@@ -89,7 +94,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    //m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kBrake);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.swerveSubsystem.zeroHeading();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -104,6 +111,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    //m_robotContainer.indexSubsystem.set_NeutralMode(IdleMode.kBrake);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
