@@ -6,6 +6,7 @@
 
 package frc.robot.commands;
 
+import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -22,7 +23,7 @@ public class SwerveJoystick_Cmd extends Command {
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> copilotJoystick_ySpdFunction_left, copilotJoystick_ySpdFunction_right;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, SpeedFunction;
-    private final Supplier<Boolean> fieldOrientedFunction, BrakeFunction, RotateFunction;
+    private final Supplier<Boolean> fieldOrientedFunction, BrakeFunction, RotateFunction, LockX, LockY, LockOmega;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     double steering_adjust = 0.0d;
 
@@ -36,7 +37,7 @@ public class SwerveJoystick_Cmd extends Command {
             Supplier<Double> SpeedFunction, Supplier<Double> copilotJoystick_ySpdFunction_left,
             Supplier<Double> copilotJoystick_ySpdFunction_right,
             Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> BrakeFunction,
-            Supplier<Boolean> RotateFunction) {
+            Supplier<Boolean> RotateFunction, Supplier<Boolean> LockX, Supplier<Boolean> LockY, Supplier<Boolean> LockOmega) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -51,6 +52,10 @@ public class SwerveJoystick_Cmd extends Command {
         this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
         this.RotateFunction = RotateFunction;
 
+        this.LockX = LockX;
+        this.LockY = LockY;
+        this.LockOmega = LockOmega;
+
         addRequirements(swerveSubsystem);
     }
 
@@ -62,6 +67,11 @@ public class SwerveJoystick_Cmd extends Command {
     @Override
     public void execute() {
 
+        // Lock 代表只有該軸能動
+        int Xok = (LockX.get() || (!LockX.get() && !LockY.get() && !LockOmega.get()) ? 1 : 0);
+        int Yok = (LockY.get() || (!LockX.get() && !LockY.get() && !LockOmega.get()) ? 1 : 0);
+        int Omegaok = (LockOmega.get() || (!LockX.get() && !LockY.get() && !LockOmega.get()) ? 1 : 0);
+        
         // 1. 獲取即時輸入
         xSpeed = xSpdFunction.get();
         ySpeed = ySpdFunction.get();
@@ -78,9 +88,9 @@ public class SwerveJoystick_Cmd extends Command {
             ySpeed = 0;
             turningSpeed = 0;
         } else {
-            xSpeed = xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
+            xSpeed = Xok * xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
                     * (-SpeedFunction.get() + 1.1) / 2;
-            ySpeed = yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
+            ySpeed = Yok * yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
                     * (-SpeedFunction.get() + 1.1) / 2;
 
             if (copilotJoystick_ySpdFunction_right.get() != 0 || copilotJoystick_ySpdFunction_left.get() != 0) {
@@ -91,7 +101,7 @@ public class SwerveJoystick_Cmd extends Command {
             if (RotateFunction.get())
                 turningSpeed = rotate_cmd_turningSpeed;
             else
-                turningSpeed = turningLimiter.calculate(turningSpeed) * 0.8
+                turningSpeed = Omegaok * turningLimiter.calculate(turningSpeed) * 0.8
                         * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond
                         * (-SpeedFunction.get() + 1.1);
         }

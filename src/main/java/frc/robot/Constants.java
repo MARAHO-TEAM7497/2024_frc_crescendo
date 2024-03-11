@@ -197,6 +197,10 @@ public final class Constants {
         public static final int kResetHeading = 11;
         public static final int kDriverBrakeButtonIdx = 1;
 
+        public static final int kLockX = 7;
+        public static final int kLockY = 8;
+        public static final int kLockOmega = 9;
+
         public static final double kDeadband = 0.1;
     }
 

@@ -79,7 +79,10 @@ public class RobotContainer {
         () -> copilotJoystick.getRawAxis(XboxController.Axis.kRightTrigger.value),
         () -> !driverJoystick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx),
         () -> driverJoystick.getRawButton(OIConstants.kDriverBrakeButtonIdx),
-        () -> (copilotJoystick.getHID().getPOV() != -1)));
+        () -> (copilotJoystick.getHID().getPOV() != -1),
+        () -> driverJoystick.getRawButton(OIConstants.kLockX),
+        () -> driverJoystick.getRawButton(OIConstants.kLockY),
+        () -> driverJoystick.getRawButton(OIConstants.kLockOmega)));
 
     elevatorSubsystem.setDefaultCommand(new elevator_cmd(elevatorSubsystem,
         () -> copilotJoystick.getLeftY(), () -> copilotJoystick.getRightY()));
