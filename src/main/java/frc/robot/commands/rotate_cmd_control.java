@@ -33,18 +33,16 @@ public class rotate_cmd_control extends Command {
         double err = deg - swerveSubsystem.getHeading();
         if (Math.abs(err) > Math.abs((deg - swerveSubsystem.getHeading()) - 360)) {
             err = (deg - swerveSubsystem.getHeading()) - 360;
-        }if (Math.abs(err) > Math.abs((deg - swerveSubsystem.getHeading()) + 360)) {
+        }
+        if (Math.abs(err) > Math.abs((deg - swerveSubsystem.getHeading()) + 360)) {
             err = (deg - swerveSubsystem.getHeading()) + 360;
         }
         System.err.println("deg err:" + err);
-        if (Math.abs(err) > 5) {
-            double output = err * kP;
-            // if (Math.abs(output) > 2)
-            //     output = Math.abs(output) / output * 2;
-            SwerveJoystick_Cmd.rotate_cmd_turningSpeed = output;
-        } else {
-            finish();
-        }
+        double output = err * kP;
+        if (Math.abs(output) > 2.5)
+            output = Math.abs(output) / output * 2.5;
+        SwerveJoystick_Cmd.rotate_cmd_turningSpeed = output;
+
     }
 
     public static void finish() {
@@ -54,6 +52,7 @@ public class rotate_cmd_control extends Command {
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();
+        SwerveJoystick_Cmd.rotate_cmd_turningSpeed = 0;
     }
 
     @Override

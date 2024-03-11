@@ -89,7 +89,7 @@ public class SwerveJoystick_Cmd extends Command {
             }
 
             if (RotateFunction.get())
-                turningSpeed = turningLimiter.calculate(rotate_cmd_turningSpeed);
+                turningSpeed = rotate_cmd_turningSpeed;
             else
                 turningSpeed = turningLimiter.calculate(turningSpeed) * 0.8
                         * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond

@@ -99,7 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
                 var alliance = DriverStation.getAlliance();
                 if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Blue;
+                    return false;
                 }
                 return false;
             },

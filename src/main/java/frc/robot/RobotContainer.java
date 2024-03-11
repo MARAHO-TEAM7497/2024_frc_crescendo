@@ -64,7 +64,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("reset_gyro", Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
     NamedCommands.registerCommand("rotate_2_0", new rotate_cmd(swerveSubsystem, 0));
     NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 120));
-    NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 240));
+    NamedCommands.registerCommand("rotate_2_240", new rotate_cmd(swerveSubsystem, 240));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
