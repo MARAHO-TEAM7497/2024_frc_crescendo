@@ -197,11 +197,6 @@ public final class Constants {
         public static final int kResetHeading = 11;
         public static final int kDriverBrakeButtonIdx = 1;
 
-        public static final int kAimCon = 3;
-        public static final int kAimCube = 4;
-        public static final int kAimAprilTag = 5;
-        public static final int kAimReflective = 6;
-
         public static final double kDeadband = 0.1;
     }
 

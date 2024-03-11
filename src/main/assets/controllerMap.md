@@ -2,17 +2,38 @@
 
 ## Driver
 
-| Key | Action |
-| ------- | ------ |
-|1|shooter assalerate|
-|2|trigger|
-|3|aim|
-|11|suck|
+| Btn/Axis | Action                 |
+| -------- | ---------------------- |
+| X        | Chassis X Speed        |
+| Y        | Chassis Y Speed        |
+| Rotate   | Chassis ω Speed        |
+| Throttle | Chassis Throttle       |
+| 1        | Brake                  |
+| 2        | Drive Field Relatively |
+| 7        | Lock X Speed           |
+| 8        | Lock Y Speed           |
+| 0        | Lock ω Speed           |
+| 11       | reset gyro             |
+
+![Driver Controller](Driver-Controller.png)
 
 ## Copilot
 
-| Key | Action |
-| ------- | ------ |
-|somthing | somthing |
+| Btn/Axis     | Action                   |
+| ------------ | ------------------------ |
+| LeftTrigger  | Tweak Chassis -Y Speed   |
+| RightTrigger | Tweak Chassis +Y Speed   |
+| povUP        | Chassis turn to 0 deg    |
+| povLeft      | Chassis turn to 120 deg  |
+| povDown      | Chassis turn to 180 deg  |
+| povRight     | Chassis turn to -120 deg |
+| Start        | Chassis turn to 90 deg   |
+| LeftBumper   | Chassis turn to -90 deg  |
+| A            | Shoot Amp                |
+| B            | Auto Aim & Take Note     |
+| X            | Take Note                |
+| Y            | Shoot Speaker            |
+| Back         | Eject Note               |
+| RightBumper  | Trigger                  |
 
-![Xbox Controller Button](Xbox-Controller-Button.png)
+![Copilot Controller](Copilot-Controller.png)

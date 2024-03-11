@@ -123,6 +123,11 @@ public class RobotContainer {
     copilotJoystick.povLeft().whileTrue(new rotate_cmd_control(swerveSubsystem, 120));
     copilotJoystick.povLeft().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
 
+    copilotJoystick.start().whileTrue(new rotate_cmd_control(swerveSubsystem, 90));
+    copilotJoystick.start().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+    copilotJoystick.leftBumper().whileTrue(new rotate_cmd_control(swerveSubsystem, 270));
+    copilotJoystick.leftBumper().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+
     new JoystickButton(driverJoystick, 11).onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
     // new JoystickButton(driverJoystick,
     // 10).onTrue(Commands.runOnce(()->swerveSubsystem.setHeading(90)));
