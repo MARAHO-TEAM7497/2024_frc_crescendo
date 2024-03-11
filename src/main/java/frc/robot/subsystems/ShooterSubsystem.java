@@ -36,8 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void amp() {
-    shooterUp.set_voltage(4);
-    shooterDown.set_voltage(-4);
+    shooterUp.set_voltage(6);
+    shooterDown.set_voltage(-6);
   }
 
   public void stop() {

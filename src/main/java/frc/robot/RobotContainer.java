@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -59,16 +60,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("shootSet", new autoSet_cmd(shooterSubsystem));
     NamedCommands.registerCommand("shoot", new autoShoot(intakeSubsystem, shooterSubsystem));
     NamedCommands.registerCommand("rotate_2_180", new rotate_cmd(swerveSubsystem, 180));
-    NamedCommands.registerCommand("reset_gyro", Commands.runOnce(()->swerveSubsystem.zeroHeading()));
+    NamedCommands.registerCommand("reset_gyro", Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
     NamedCommands.registerCommand("rotate_2_0", new rotate_cmd(swerveSubsystem, 0));
-    NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 120));
-    NamedCommands.registerCommand("rotate_2_-120", new rotate_cmd(swerveSubsystem, -120));
-
-
-
-
-    
-
+    var alliance = DriverStation.getAlliance();
+    if (alliance.get() == DriverStation.Alliance.Red) {
+      NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 120));
+    } else {
+      
+      NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 240));
+    }
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -123,16 +123,17 @@ public class RobotContainer {
 
     copilotJoystick.povUp().whileTrue(new rotate_cmd(swerveSubsystem, 0));
     copilotJoystick.povUp().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
-    copilotJoystick.povRight().whileTrue(new rotate_cmd(swerveSubsystem, 90));
+    copilotJoystick.povRight().whileTrue(new rotate_cmd(swerveSubsystem, 120));
     copilotJoystick.povRight().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
     copilotJoystick.povDown().whileTrue(new rotate_cmd(swerveSubsystem, 180));
     copilotJoystick.povDown().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
-    copilotJoystick.povLeft().whileTrue(new rotate_cmd(swerveSubsystem, 270));
+    copilotJoystick.povLeft().whileTrue(new rotate_cmd(swerveSubsystem, -120));
     copilotJoystick.povLeft().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
 
-    new JoystickButton(driverJoystick, 11).onTrue(Commands.runOnce(()->swerveSubsystem.zeroHeading()));
-    // new JoystickButton(driverJoystick, 10).onTrue(Commands.runOnce(()->swerveSubsystem.setHeading(90)));
-    
+    new JoystickButton(driverJoystick, 11).onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+    // new JoystickButton(driverJoystick,
+    // 10).onTrue(Commands.runOnce(()->swerveSubsystem.setHeading(90)));
+
     // copilotJoystick.povDown().whileTrue(Commands.run(() -> {
     // }));
     // copilotJoystick.povDown().onFalse(Commands.runOnce(() ->
