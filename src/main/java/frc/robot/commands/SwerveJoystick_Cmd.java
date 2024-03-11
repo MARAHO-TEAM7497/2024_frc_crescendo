@@ -22,19 +22,21 @@ public class SwerveJoystick_Cmd extends Command {
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> copilotJoystick_ySpdFunction_left, copilotJoystick_ySpdFunction_right;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, SpeedFunction;
-    private final Supplier<Boolean> fieldOrientedFunction, BrakeFunction, AutoAimFunction;
+    private final Supplier<Boolean> fieldOrientedFunction, BrakeFunction, RotateFunction;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     double steering_adjust = 0.0d;
 
     double xSpeed, ySpeed, turningSpeed;
+    static double rotate_cmd_turningSpeed;
 
     ChassisSpeeds chassisSpeeds;
 
     public SwerveJoystick_Cmd(SwerveSubsystem swerveSubsystem,
-    Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-    Supplier<Double> SpeedFunction, Supplier<Double> copilotJoystick_ySpdFunction_left, Supplier<Double> copilotJoystick_ySpdFunction_right,
-    Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> BrakeFunction,
-    Supplier<Boolean> AutoAimFunction) {
+            Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
+            Supplier<Double> SpeedFunction, Supplier<Double> copilotJoystick_ySpdFunction_left,
+            Supplier<Double> copilotJoystick_ySpdFunction_right,
+            Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> BrakeFunction,
+            Supplier<Boolean> RotateFunction) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -47,7 +49,7 @@ public class SwerveJoystick_Cmd extends Command {
         this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
-        this.AutoAimFunction = AutoAimFunction;
+        this.RotateFunction = RotateFunction;
 
         addRequirements(swerveSubsystem);
     }
@@ -60,54 +62,56 @@ public class SwerveJoystick_Cmd extends Command {
     @Override
     public void execute() {
 
-        if (!AutoAimFunction.get()) {
-            // 1. 獲取即時輸入
-            xSpeed = xSpdFunction.get();
-            ySpeed = ySpdFunction.get();
-            turningSpeed = turningSpdFunction.get();
+        // 1. 獲取即時輸入
+        xSpeed = xSpdFunction.get();
+        ySpeed = ySpdFunction.get();
+        turningSpeed = turningSpdFunction.get();
 
-            // 2. 處理死區
-            xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
-            ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
-            turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
+        // 2. 處理死區
+        xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
+        turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
 
-            // 3. 加入濾波器
-            if (BrakeFunction.get()) {
-                xSpeed = 0;
-                ySpeed = 0;
-                turningSpeed = 0;
-            } else {
-                xSpeed = xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
-                        * (-SpeedFunction.get() + 1.1) / 2;
-                ySpeed = yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
-                        * (-SpeedFunction.get() + 1.1) / 2;
+        // 3. 加入濾波器
+        if (BrakeFunction.get()) {
+            xSpeed = 0;
+            ySpeed = 0;
+            turningSpeed = 0;
+        } else {
+            xSpeed = xLimiter.calculate(xSpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
+                    * (-SpeedFunction.get() + 1.1) / 2;
+            ySpeed = yLimiter.calculate(ySpeed) * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond
+                    * (-SpeedFunction.get() + 1.1) / 2;
 
-                if (copilotJoystick_ySpdFunction_right.get() != 0 || copilotJoystick_ySpdFunction_left.get() != 0) {
-                    ySpeed = copilotJoystick_ySpdFunction_right.get() - copilotJoystick_ySpdFunction_left.get();
-                    ySpeed /= 2;
-                }
+            if (copilotJoystick_ySpdFunction_right.get() != 0 || copilotJoystick_ySpdFunction_left.get() != 0) {
+                ySpeed = copilotJoystick_ySpdFunction_right.get() - copilotJoystick_ySpdFunction_left.get();
+                ySpeed /= 2;
+            }
+
+            if (RotateFunction.get())
+                turningSpeed = turningLimiter.calculate(rotate_cmd_turningSpeed);
+            else
                 turningSpeed = turningLimiter.calculate(turningSpeed) * 0.8
                         * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond
                         * (-SpeedFunction.get() + 1.1);
-            }
-
-            // 4. 設定底盤目標速度
-            SmartDashboard.putBoolean("fieldOrientedFunction", fieldOrientedFunction.get());
-            if (fieldOrientedFunction.get()) {
-                // 相對場地
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                        xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
-            } else {
-                // 相對機器人
-                chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-            }
-
-            // 5. 轉換成各SwerveModule狀態
-            SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-
-            // 6. 將各SwerveModule輸出
-            swerveSubsystem.setModuleStates(moduleStates);
         }
+
+        // 4. 設定底盤目標速度
+        SmartDashboard.putBoolean("fieldOrientedFunction", fieldOrientedFunction.get());
+        if (fieldOrientedFunction.get()) {
+            // 相對場地
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+        } else {
+            // 相對機器人
+            chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+        }
+
+        // 5. 轉換成各SwerveModule狀態
+        SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        // 6. 將各SwerveModule輸出
+        swerveSubsystem.setModuleStates(moduleStates);
     }
 
     @Override

@@ -25,6 +25,7 @@ import frc.robot.commands.autoShoot;
 import frc.robot.commands.autoTake_cmd;
 import frc.robot.commands.elevator_cmd;
 import frc.robot.commands.rotate_cmd;
+import frc.robot.commands.rotate_cmd_control;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -62,13 +63,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("rotate_2_180", new rotate_cmd(swerveSubsystem, 180));
     NamedCommands.registerCommand("reset_gyro", Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
     NamedCommands.registerCommand("rotate_2_0", new rotate_cmd(swerveSubsystem, 0));
-    var alliance = DriverStation.getAlliance();
-    if (alliance.get() == DriverStation.Alliance.Red) {
-      NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 120));
-    } else {
-      
-      NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 240));
-    }
+    NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 120));
+    NamedCommands.registerCommand("rotate_2_120", new rotate_cmd(swerveSubsystem, 240));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -83,10 +79,7 @@ public class RobotContainer {
         () -> copilotJoystick.getRawAxis(XboxController.Axis.kRightTrigger.value),
         () -> !driverJoystick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx),
         () -> driverJoystick.getRawButton(OIConstants.kDriverBrakeButtonIdx),
-        () -> driverJoystick.getRawButton(OIConstants.kAimCon)
-            || driverJoystick.getRawButton(OIConstants.kAimCube)
-            || driverJoystick.getRawButton(OIConstants.kAimAprilTag)
-            || driverJoystick.getRawButton(OIConstants.kAimReflective)));
+        () -> (copilotJoystick.getHID().getPOV() != -1)));
 
     elevatorSubsystem.setDefaultCommand(new elevator_cmd(elevatorSubsystem,
         () -> copilotJoystick.getLeftY(), () -> copilotJoystick.getRightY()));
@@ -121,14 +114,14 @@ public class RobotContainer {
     copilotJoystick.back().whileTrue(Commands.run(() -> intakeSubsystem.eject()));
     copilotJoystick.back().onFalse(Commands.runOnce(() -> intakeSubsystem.stop()));
 
-    copilotJoystick.povUp().whileTrue(new rotate_cmd(swerveSubsystem, 0));
-    copilotJoystick.povUp().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
-    copilotJoystick.povRight().whileTrue(new rotate_cmd(swerveSubsystem, 120));
-    copilotJoystick.povRight().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
-    copilotJoystick.povDown().whileTrue(new rotate_cmd(swerveSubsystem, 180));
-    copilotJoystick.povDown().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
-    copilotJoystick.povLeft().whileTrue(new rotate_cmd(swerveSubsystem, -120));
-    copilotJoystick.povLeft().onFalse(Commands.runOnce(() -> rotate_cmd.finish()));
+    copilotJoystick.povUp().whileTrue(new rotate_cmd_control(swerveSubsystem, 0));
+    copilotJoystick.povUp().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+    copilotJoystick.povRight().whileTrue(new rotate_cmd_control(swerveSubsystem, 240));
+    copilotJoystick.povRight().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+    copilotJoystick.povDown().whileTrue(new rotate_cmd_control(swerveSubsystem, 180));
+    copilotJoystick.povDown().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+    copilotJoystick.povLeft().whileTrue(new rotate_cmd_control(swerveSubsystem, 120));
+    copilotJoystick.povLeft().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
 
     new JoystickButton(driverJoystick, 11).onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
     // new JoystickButton(driverJoystick,
