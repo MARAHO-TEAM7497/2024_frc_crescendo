@@ -1,5 +1,7 @@
 # Controller Map
 
+> Red means btn and yellow means axis.
+
 ## Driver
 
 | Btn/Axis | Action               |
