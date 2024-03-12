@@ -29,13 +29,13 @@
 | povLeft      | Chassis turn to 120 deg                 |
 | povDown      | Chassis turn to 180 deg                 |
 | povRight     | Chassis turn to -120 deg                |
-| Start        | Chassis turn to 90 deg                  |
+| Back         | Chassis turn to 90 deg                  |
 | LeftBumper   | Chassis turn to -90 deg                 |
 | A            | Shoot Amp                               |
 | B            | Auto Aim & Take Note                    |
 | X            | Take Note                               |
 | Y            | Shoot Speaker                           |
-| Back         | Eject Note                              |
+| Start        | Eject Note                              |
 | RightBumper  | Trigger                                 |
 
 ![Copilot Controller](Copilot-Controller.png)

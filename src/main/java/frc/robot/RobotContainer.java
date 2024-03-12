@@ -114,8 +114,8 @@ public class RobotContainer {
     copilotJoystick.b().whileTrue(new autoTake_cmd(swerveSubsystem, limelight, intakeSubsystem));
     copilotJoystick.b().whileFalse(Commands.run(() -> autoTake_cmd.finish()));
 
-    copilotJoystick.back().whileTrue(Commands.run(() -> intakeSubsystem.eject()));
-    copilotJoystick.back().onFalse(Commands.runOnce(() -> intakeSubsystem.stop()));
+    copilotJoystick.start().whileTrue(Commands.run(() -> intakeSubsystem.eject()));
+    copilotJoystick.start().onFalse(Commands.runOnce(() -> intakeSubsystem.stop()));
 
     copilotJoystick.povUp().whileTrue(new rotate_cmd_control(swerveSubsystem, 0));
     copilotJoystick.povUp().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
@@ -126,8 +126,8 @@ public class RobotContainer {
     copilotJoystick.povLeft().whileTrue(new rotate_cmd_control(swerveSubsystem, 120));
     copilotJoystick.povLeft().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
 
-    copilotJoystick.start().whileTrue(new rotate_cmd_control(swerveSubsystem, 90));
-    copilotJoystick.start().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
+    copilotJoystick.back().whileTrue(new rotate_cmd_control(swerveSubsystem, 90));
+    copilotJoystick.back().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
     copilotJoystick.leftBumper().whileTrue(new rotate_cmd_control(swerveSubsystem, 270));
     copilotJoystick.leftBumper().onFalse(Commands.runOnce(() -> rotate_cmd_control.finish()));
 
